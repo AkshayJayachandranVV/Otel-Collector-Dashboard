@@ -1,11 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { MetricsInterceptor } from './modules/metrics/metrics.interceptor';
+import { NestWinstonLogger } from './logger/nest-winston-logger.service';
 
 
 async function bootstrap() {
   
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule,{
+    logger: new NestWinstonLogger(),
+  });
 
 
   app.enableCors({

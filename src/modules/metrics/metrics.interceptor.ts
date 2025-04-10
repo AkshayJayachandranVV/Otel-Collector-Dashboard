@@ -17,7 +17,7 @@ import {
   });
   
   const totalRequestCounter = new client.Counter({
-    name: 'server_req',
+    name: 'server_req_total', 
     help: 'Total number of requests to the server',
   });
   

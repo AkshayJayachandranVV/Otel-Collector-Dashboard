@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module,MiddlewareConsumer} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './modules/user/user.module';
@@ -6,8 +6,8 @@ import { DatabaseModule } from './database/database.module'
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ExpenseUser } from './database/entities/user.entity';
 import { MetricsModule } from './modules/metrics/metrics.module';
-
-
+import { NestWinstonLogger } from './logger/nest-winston-logger.service';
+import { LoggerMiddleware } from './logger/logger.middleware';
 
 
 @Module({
@@ -15,4 +15,15 @@ import { MetricsModule } from './modules/metrics/metrics.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(){
+    const logger = new NestWinstonLogger();
+    logger.log('AppModule initialized ');
+  }
+
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+
+  
+}
