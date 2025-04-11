@@ -60,33 +60,31 @@ export class OtelCollector {
   private meterProvider: MeterProvider;
 
   constructor() {
-    // Setup resource
+    
     const resource = new Resource({
       [ATTR_SERVICE_NAME]: 'Akshay',
     });
 
-    // Setup OTLP exporter
     const otlpExporter = new OTLPMetricExporter({
       url: 'http://localhost:4318/v1/metrics',
     });
+  
+    const prometheusExporter = new PrometheusExporter({ port: 9464 });
+    prometheusExporter.startServer();
 
-    // Setup Prometheus exporter
-    const prometheusExporter = new PrometheusExporter({
-      port: 9464,
-    });
-    prometheusExporter.startServer(); // Important!
 
     // Setup MeterProvider with both exporters
-    this.meterProvider = new MeterProvider({
-      resource,
-      readers: [
-        new PeriodicExportingMetricReader({
-          exporter: otlpExporter,
-          exportIntervalMillis: 5000,
-        }),
-        prometheusExporter, // Add this to readers so both exporters are active
-      ],
-    });
+  this.meterProvider = new MeterProvider({
+    resource,
+    readers: [
+      new PeriodicExportingMetricReader({
+        exporter: otlpExporter,
+        exportIntervalMillis: 1000,
+      }),
+      prometheusExporter,
+    ],
+  });
+
   }
 
   public getMeter(): MeterProvider {
