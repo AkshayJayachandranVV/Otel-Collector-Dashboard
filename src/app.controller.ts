@@ -9,5 +9,11 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
+
+
+   @Get('data')
+   getLargeData() {
+   return this.appService.readLargeJsonFile();
+}
   
 }

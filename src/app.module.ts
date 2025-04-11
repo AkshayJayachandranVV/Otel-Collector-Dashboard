@@ -1,3 +1,4 @@
+import './otel/otel'; 
 import { Module,MiddlewareConsumer} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -8,12 +9,13 @@ import { ExpenseUser } from './database/entities/user.entity';
 import { MetricsModule } from './modules/metrics/metrics.module';
 import { NestWinstonLogger } from './logger/nest-winston-logger.service';
 import { LoggerMiddleware } from './logger/logger.middleware';
+import { OtelCollector } from './otel/otel';
 
 
 @Module({
   imports: [UserModule,DatabaseModule,TypeOrmModule.forFeature([ExpenseUser]),MetricsModule],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, OtelCollector],
 })
 export class AppModule {
   constructor(){
