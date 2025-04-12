@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import * as client from 'prom-client';
+import { OtelCollector } from '../../otel/otel';
 
 @Injectable()
 export class MetricsService {
-  private readonly collectDefaultMetrics = client.collectDefaultMetrics;
+  private meter = new OtelCollector().getMeter();
+  private counter = this.meter.createCounter('custom_request_counter', {
+    description: 'Counts number of requests',
+  });
 
   constructor() {
-    this.collectDefaultMetrics();
-  }
-
-  async getMetrics(): Promise<string> {
-    return await client.register.metrics();
+    setInterval(() => {
+      this.counter.add(1, { route: '/demo' });
+      console.log('✅ Counter metric incremented');
+    }, 5000);
   }
 }
