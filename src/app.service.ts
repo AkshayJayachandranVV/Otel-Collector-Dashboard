@@ -15,9 +15,14 @@ export class AppService {
       description: 'Total times large JSON file is read',
     });
 
+    
+
   }
 
   getHello(): string {
+    setInterval(() => {
+      this.counter.add(1, { route: '/home' });
+    }, 5000);
     return 'Hello World!';
   }
 
@@ -32,5 +37,7 @@ export class AppService {
     const fileContents = readFileSync(filePath, 'utf8');
     return JSON.parse(fileContents);
   }
+
+
 
 }
