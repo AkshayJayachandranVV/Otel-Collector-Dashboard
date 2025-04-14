@@ -13,11 +13,20 @@ export class AppService {
     this.counter = meter.createCounter('read_json_file_total', {
       description: 'Total times large JSON file is read',
     });
+
+    this.otel.recordMetric();
+
+    this.counter = meter.createCounter('read_json_file_total', {
+      description: 'Total times large JSON file is read',
+    });
+
   
     // ✅ Safe: only 1 interval starts when service starts
     setInterval(() => {
       this.counter.add(1, { route: '/home' });
     }, 5000);
+
+    
   }
 
 

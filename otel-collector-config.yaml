@@ -1,15 +1,17 @@
 receivers:
   otlp:
     protocols:
-      http:  # Enables OTLP/HTTP receiver on port 4318 by default
- 
+      http:
+        endpoint: "0.0.0.0:4318"  
+
 exporters:
+  debug:
+    verbosity: detailed
   prometheus:
-    endpoint: "0.0.0.0:8889"  # Prometheus will scrape from this endpoint
- 
+    endpoint: "0.0.0.0:8889"
+
 service:
   pipelines:
     metrics:
       receivers: [otlp]
-      exporters: [prometheus]
- 
+      exporters: [debug, prometheus]

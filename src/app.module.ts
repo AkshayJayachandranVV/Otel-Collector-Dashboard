@@ -10,10 +10,11 @@ import { MetricsModule } from './modules/metrics/metrics.module';
 import { NestWinstonLogger } from './logger/nest-winston-logger.service';
 import { LoggerMiddleware } from './logger/logger.middleware';
 import { OtelCollector } from './otel/otel';
+import { OtelModule } from './otel/otel.module';
 
 
 @Module({
-  imports: [UserModule,DatabaseModule,TypeOrmModule.forFeature([ExpenseUser]),MetricsModule],
+  imports: [UserModule,DatabaseModule,TypeOrmModule.forFeature([ExpenseUser]),MetricsModule,OtelModule],
   controllers: [AppController],
   providers: [AppService, OtelCollector],
 })
@@ -26,6 +27,8 @@ export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(LoggerMiddleware).forRoutes('*');
   }
+
+  
 
   
 }

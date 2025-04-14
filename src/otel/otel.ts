@@ -38,8 +38,6 @@
 //  public getMeter() {
 //   return this.meterProvider
 //  }
-
-
 // }
 
 
@@ -60,9 +58,10 @@ export class OtelCollector {
 
     // Exporter to OpenTelemetry Collector
     const otlpExporter = new OTLPMetricExporter({
-      url: 'http://localhost:4318/v1/metrics',
+      url: 'http://localhost:4318/v1/metrics',  // Updated to match new port
     });
-
+    
+    
 
     this.meterProvider = new MeterProvider({
       resource,
@@ -75,7 +74,24 @@ export class OtelCollector {
     });
   }
 
+  
   public getMeter(): ReturnType<MeterProvider['getMeter']> {
     return this.meterProvider.getMeter('otel-default');
   }
+
+
+  public recordMetric() {
+    const meter = this.getMeter();
+    const counter = meter.createCounter('demo_counter', {
+      description: 'A test counter',
+    });
+  
+    setInterval(() => {
+      counter.add(1, { environment: 'dev' });
+      console.log('Metric sent');
+    }, 3000);
+  }
+
+
+
 }
