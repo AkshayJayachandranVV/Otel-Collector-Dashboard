@@ -24,9 +24,10 @@ export class AppModule {
     logger.log('AppModule initialized ');
   }
 
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('*');
-  }
+  // configure(consumer: MiddlewareConsumer,) {
+  //   consumer.apply(MetricsMiddleware).forRoutes('*');
+  //   // consumer.apply(LoggerMiddleware).forRoutes('*');
+  // }
 
   
 

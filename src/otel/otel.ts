@@ -1,67 +1,23 @@
-// import { NodeSDK } from '@opentelemetry/sdk-node';
-// import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
-// import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
-// import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
-// import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
-// import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
-// import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
-// import { MeterProvider } from '@opentelemetry/sdk-metrics';
-// import { Resource } from '@opentelemetry/resources';
-
-
-
-// export class OtelCollector {
- 
-//   constructor(){}
-
-
-//    metricExporter = new OTLPMetricExporter({
-//     url: 'http://localhost:4318/v1/metrics', 
-//   });
-  
-//    resource = new Resource({
-//     [ATTR_SERVICE_NAME]: 'Akshay',
-//   });
-
-
-//   const prometheusExporter = new PrometheusExporter({
-//     port: 9464,
-//   });
-//   prometheusExporter.startServer();
-
-  
-//    meterProvider = new MeterProvider({
-//     resource: this.resource,
-//     readers: [new PeriodicExportingMetricReader({ exporter: this.metricExporter, exportIntervalMillis: 5000 })],
-//   });
-
-//  public getMeter() {
-//   return this.meterProvider
-//  }
-// }
-
-
 import { MeterProvider } from '@opentelemetry/sdk-metrics';
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
-import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
 import { Resource } from '@opentelemetry/resources';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
+import { Meter } from '@opentelemetry/api';
 
 export class OtelCollector {
   private meterProvider: MeterProvider;
+  private meter: Meter;
+  private requestCounter: ReturnType<Meter['createCounter']>;
 
   constructor() {
     const resource = new Resource({
       [ATTR_SERVICE_NAME]: 'Akshay',
     });
 
-    // Exporter to OpenTelemetry Collector
     const otlpExporter = new OTLPMetricExporter({
-      url: 'http://localhost:4318/v1/metrics',  // Updated to match new port
+      url: 'http://localhost:4318/v1/metrics',
     });
-    
-    
 
     this.meterProvider = new MeterProvider({
       resource,
@@ -72,26 +28,18 @@ export class OtelCollector {
         }),
       ],
     });
-  }
 
-  
-  public getMeter(): ReturnType<MeterProvider['getMeter']> {
-    return this.meterProvider.getMeter('otel-default');
-  }
+    this.meter = this.meterProvider.getMeter('otel-default');
 
 
-  public recordMetric() {
-    const meter = this.getMeter();
-    const counter = meter.createCounter('demo_counter', {
-      description: 'A test counter',
+    this.requestCounter = this.meter.createCounter('mock_json_request', {
+      description: 'Counts total /read-large-file requests',
     });
-  
-    setInterval(() => {
-      counter.add(1, { environment: 'dev' });
-      console.log('Metric sent');
-    }, 3000);
+    
   }
 
-
+  public getCounter() {
+    return this.requestCounter;
+  }
 
 }

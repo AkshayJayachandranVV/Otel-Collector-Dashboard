@@ -1,6 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Logger } from '@nestjs/common';
 import { AppService } from './app.service';
-
+import axios from "axios"
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
@@ -12,11 +12,21 @@ export class AppController {
 
 
 
-  @Get('read-large-file')
-  readJson() {
+  @Get('/read-large-file')
+  readLargeJsonFile() {
+    // Track the actual request for this endpoint
     return this.appService.readLargeJsonFile();
   }
 
-
+ @Get('fetch-many')
+ async fetchMany() {
+      for (let i = 0; i< 100; i++) {
+        try {
+          await axios.get('http://localhost:7200/read-large-file')
+        } catch (error) {
+          Logger.log(error)
+        }
+      }
+ }
   
 }
