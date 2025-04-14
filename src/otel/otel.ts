@@ -60,20 +60,8 @@ export class OtelCollector {
 
     // Exporter to OpenTelemetry Collector
     const otlpExporter = new OTLPMetricExporter({
-      url: 'http://127.0.0.1:4318/v1/metrics',
+      url: 'http://localhost:4318/v1/metrics',
     });
-
-    // Exporter for Prometheus scraping
-    const prometheusExporter = new PrometheusExporter({
-      port: 9464,
-      endpoint: '/metrics',
-    }, () => {
-      console.log('✅ Prometheus scrape endpoint: http://localhost:9464/metrics');
-    });
-
-    prometheusExporter.startServer();
-    console.log('✅ Prometheus metrics server started on http://localhost:9464');
-
 
 
     this.meterProvider = new MeterProvider({
@@ -83,7 +71,6 @@ export class OtelCollector {
           exporter: otlpExporter,
           exportIntervalMillis: 1000,
         }),
-        prometheusExporter, // PrometheusExporter is also a MetricReader
       ],
     });
   }
