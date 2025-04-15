@@ -6,7 +6,7 @@ import { NestWinstonLogger } from './logger/nest-winston-logger.service';
 import { SlowestApiInterceptor } from './common/interceptors/slowest-api.interceptor';
 import { OtelCollector } from './otel/otel';
 import { Logger } from '@nestjs/common';
-// import { OtelResponseTimeInterceptor } from './otel/otel-response-time.interceptor';
+import { OtelResponseTimeInterceptor } from './otel/otel-response-time.interceptor';
 
 
 async function bootstrap() {
@@ -22,7 +22,7 @@ async function bootstrap() {
   try {
     const otelCollector = new OtelCollector();
     app.useGlobalInterceptors(new SlowestApiInterceptor(otelCollector));
-    // app.useGlobalInterceptors(new OtelResponseTimeInterceptor(otelCollector));
+    app.useGlobalInterceptors(new OtelResponseTimeInterceptor(otelCollector));
 
   } catch (error) {
     logger.error('OtelCollector failed to initialize:', error);

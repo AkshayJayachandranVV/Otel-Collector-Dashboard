@@ -25,7 +25,6 @@ export class AppService {
       return { error: 'Failed to read file' };
     } finally {
       const duration = Date.now() - start; // Calculate duration
-      this.otelCollector.trackResponseTime(duration, route, method); // Track latency
     }
   }
 
