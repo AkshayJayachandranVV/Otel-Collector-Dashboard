@@ -18,15 +18,32 @@ export class AppController {
     return this.appService.readLargeJsonFile();
   }
 
- @Get('fetch-many')
- async fetchMany() {
-      for (let i = 0; i< 100; i++) {
-        try {
-          await axios.get('http://localhost:7200/read-large-file')
-        } catch (error) {
-          Logger.log(error)
-        }
-      }
- }
+
+
+  @Get('logger')
+  logger(){
+    return this.appService.logger()
+  }
+
+
+  @Get('test')
+  test(){
+    return this.appService.test()
+  }
+
+
+
+  
+
+//  @Get('fetch-many')
+//  async fetchMany() {
+//       for (let i = 0; i< 100; i++) {
+//         try {
+//           await axios.get('http://localhost:7200/read-large-file')
+//         } catch (error) {
+//           Logger.log(error)
+//         }
+//       }
+//  }
   
 }
