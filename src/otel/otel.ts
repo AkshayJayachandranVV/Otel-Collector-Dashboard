@@ -8,6 +8,7 @@ import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import { Meter, Counter, Histogram } from '@opentelemetry/api';
 
 export class OtelCollector {
+  private slowestApiHistogram: Histogram;
   private meterProvider: MeterProvider;
   private meter: Meter;
   private requestCounter: Counter;
@@ -44,7 +45,18 @@ export class OtelCollector {
       description: 'Tracks the response time of /read-large-file in ms',
       unit: 'ms',
     });
+
+
+      // New histogram to track all routes' response time — separate from the current one
+  this.slowestApiHistogram = this.meter.createHistogram('api_response_time_internal_ms', {
+    description: 'Tracks response time of ALL routes internally to find slowest API',
+    unit: 'ms',
+  });
+
+
+
   }
+  
 
   public trackRequest(route: string, method: string) {
     this.requestCounter.add(1, { route, method });
@@ -57,4 +69,10 @@ export class OtelCollector {
   public getCounter() {
     return this.requestCounter;
   }
+
+
+  public trackInternalResponseTime(durationInMs: number, route: string, method: string) {
+    this.slowestApiHistogram.record(durationInMs, { route, method });
+  }
+
 }

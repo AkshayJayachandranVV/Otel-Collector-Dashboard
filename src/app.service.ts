@@ -11,6 +11,8 @@ export class AppService {
     const route = '/read-large-file';
     const method = 'GET';
 
+    console.log("enetered")
+
     const start = Date.now(); // Start tracking time
     this.otelCollector.trackRequest(route, method); // Count request
 
@@ -25,6 +27,24 @@ export class AppService {
       const duration = Date.now() - start; // Calculate duration
       this.otelCollector.trackResponseTime(duration, route, method); // Track latency
     }
+  }
+
+  readLarge2Times():any {
+
+    try {
+      
+      console.log("2 Times file read")
+      const filePath = join(process.cwd(), 'src', 'assets', 'large_dummy_file.json');
+      const fileContents = readFileSync(filePath, 'utf8');
+      const fileContents2 = readFileSync(filePath, 'utf8');
+
+      return JSON.parse(fileContents);
+
+
+    } catch (error) {
+       console.log(error)
+    }
+
   }
 
 
@@ -48,5 +68,31 @@ export class AppService {
       console.log(error)
     }
   }
+
+
+  HeavyTask() {
+    try {
+      const limit = 100000;
+      const primes: number[] = [];
+  
+      for (let num = 2; num <= limit; num++) {
+        let isPrime = true;
+        for (let i = 2; i <= Math.sqrt(num); i++) {
+          if (num % i === 0) {
+            isPrime = false;
+            break;
+          }
+        }
+        if (isPrime) primes.push(num);
+      }
+  
+      console.log(`Found ${primes.length} prime numbers up to ${limit}`);
+      return primes.length;
+    } catch (error) {
+      console.error('Error in HeavyTask:', error);
+      return 0;
+    }
+  }
+
 
 }

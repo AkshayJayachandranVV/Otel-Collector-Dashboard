@@ -19,6 +19,22 @@ export class AppController {
   }
 
 
+  @Get('/read-multi-file')
+  readLarge2Times() {
+    // Track the actual request for this endpoint
+    return this.appService.readLarge2Times();
+  }
+
+ 
+  @Get('heavy-task')
+  HeavyTask(){
+    try {
+      this.appService.HeavyTask()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
 
   @Get('logger')
   logger(){

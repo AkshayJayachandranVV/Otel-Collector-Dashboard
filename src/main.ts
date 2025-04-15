@@ -2,7 +2,8 @@ import './otel/otel';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestWinstonLogger } from './logger/nest-winston-logger.service';
-
+import { SlowestApiInterceptor } from './common/interceptors/slowest-api.interceptor';
+import { OtelCollector } from './otel/otel';
 
 async function bootstrap() {
   
@@ -16,6 +17,11 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type, Authorization',
   });
+
+
+  const otelCollector = new OtelCollector();
+  app.useGlobalInterceptors(new SlowestApiInterceptor(otelCollector)); // ✅ separate interceptor
+
 
 
 
