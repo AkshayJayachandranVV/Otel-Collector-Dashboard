@@ -29,48 +29,42 @@ export class AppService {
     }
   }
 
-  readLarge2Times():any {
-
+  readLarge2Times() {
     try {
-      
-      console.log("2 Times file read")
+      console.log("2 Times file read");
       const filePath = join(process.cwd(), 'src', 'assets', 'large_dummy_file.json');
       const fileContents = readFileSync(filePath, 'utf8');
-      const fileContents2 = readFileSync(filePath, 'utf8');
-
+      const fileContents2 = readFileSync(filePath, 'utf8'); // Consider optimizing this
       return JSON.parse(fileContents);
-
-
     } catch (error) {
-       console.log(error)
+      console.error('Error in readLarge2Times:', error);
+      return { error: 'Failed to read file twice' };
     }
-
   }
 
 
-  logger(){
+  logger() {
     try {
-      console.log("logger")
-      return "success"
+      console.log("logger");
+      return "success";
     } catch (error) {
-      console.log(error)
+      console.error('Error in logger:', error);
+      return { error: 'Logger failed' };
     }
   }
-
-
-  test(){
+  
+  test() {
     try {
-      for(let i=0;i<0;i++){
-
-      }
-      return 'test done'
+      return 'test done';
     } catch (error) {
-      console.log(error)
+      console.error('Error in test:', error);
+      return { error: 'Test failed' };
     }
   }
+  
 
 
-  HeavyTask() {
+  async HeavyTask() {
     try {
       const limit = 100000;
       const primes: number[] = [];

@@ -6,8 +6,9 @@ import {
     NestInterceptor,
   } from '@nestjs/common';
   import { Observable } from 'rxjs';
-  import { tap } from 'rxjs/operators';
+  import { tap, catchError } from 'rxjs/operators';
   import { OtelCollector } from '../../otel/otel';
+  import { Logger } from '@nestjs/common';
   
   @Injectable()
   export class SlowestApiInterceptor implements NestInterceptor {
@@ -17,13 +18,26 @@ import {
       const start = Date.now();
       const req = context.switchToHttp().getRequest();
   
-      const method = req.method;
-      const route = req.route?.path || req.url;
+      const method = req.method ?? 'UNKNOWN_METHOD';
+      const route = req.route?.path || req.url || 'UNKNOWN_ROUTE';
   
       return next.handle().pipe(
         tap(() => {
           const duration = Date.now() - start;
-          this.otelCollector.trackInternalResponseTime(duration, route, method); // ✅ only internal metric
+          try {
+            this.otelCollector?.trackInternalResponseTime(duration, route, method);
+          } catch (error) {
+            Logger.warn(`Failed to track internal response time: ${error?.message}`);
+          }
+        }),
+        catchError((err) => {
+          const duration = Date.now() - start;
+          try {
+            this.otelCollector?.trackInternalResponseTime(duration, route, method);
+          } catch (error) {
+            Logger.warn(`Failed to track error response time: ${error?.message}`);
+          }
+          throw err; // rethrow the error after tracking
         }),
       );
     }

@@ -5,12 +5,6 @@ import axios from "axios"
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  // @Get()
-  // getHello(): string {
-  //   return this.appService.getHello();
-  // }
-
-
 
   @Get('/read-large-file')
   readLargeJsonFile() {
@@ -27,39 +21,36 @@ export class AppController {
 
  
   @Get('heavy-task')
-  HeavyTask(){
+  async heavyTask() {
     try {
-      this.appService.HeavyTask()
+      const result = await this.appService.HeavyTask();
+      return { success: true, result };
     } catch (error) {
-      console.log(error)
+      Logger.error('Error in /heavy-task', error);
+      return { success: false, message: 'Internal Server Error' };
     }
   }
-
-
-  @Get('logger')
-  logger(){
-    return this.appService.logger()
-  }
-
-
-  @Get('test')
-  test(){
-    return this.appService.test()
-  }
-
-
-
   
 
-//  @Get('fetch-many')
-//  async fetchMany() {
-//       for (let i = 0; i< 100; i++) {
-//         try {
-//           await axios.get('http://localhost:7200/read-large-file')
-//         } catch (error) {
-//           Logger.log(error)
-//         }
-//       }
-//  }
+  @Get('logger')
+  logger() {
+    try {
+      return this.appService.logger();
+    } catch (error) {
+      Logger.error('Error in /logger', error);
+      return { success: false, message: 'Internal Server Error' };
+    }
+  }
+  
+
+  @Get('test')
+  test() {
+    try {
+      return this.appService.test();
+    } catch (error) {
+      Logger.error('Error in /test', error);
+      return { success: false, message: 'Internal Server Error' };
+    }
+  }
   
 }
